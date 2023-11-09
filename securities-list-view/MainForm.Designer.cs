@@ -49,6 +49,7 @@
             ClientSize = new Size(478, 744);
             Controls.Add(m_lsvSecurities);
             Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Main Form";
             ResumeLayout(false);
         }

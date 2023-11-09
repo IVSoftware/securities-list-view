@@ -22,13 +22,13 @@ namespace securities_list_view
             m_lsvSecurities.Columns.Add("", 80);
             m_lsvSecurities.Columns.Add("Security", 300); // Text column with a width of 200 pixels
             m_lsvSecurities.CheckBoxes = true;
-            m_lsvSecurities.VirtualMode = true; 
+            m_lsvSecurities.VirtualMode = true;
             m_lsvSecurities.RetrieveVirtualItem += (sender, e) =>
             {
                 if (e.ItemIndex >= 0 && e.ItemIndex < SecuritiesList.Count)
                 {
                     var security = SecuritiesList[e.ItemIndex];
-                    ListViewItem item = new ListViewItem(text: security.IsChecked ? "\u2612" : "\u2610" );
+                    ListViewItem item = new ListViewItem(text: security.IsChecked ? "\u2612" : "\u2610");
                     item.SubItems.Add(security.Text);
                     e.Item = item;
                 }
@@ -40,7 +40,7 @@ namespace securities_list_view
             m_lsvSecurities.MouseClick += (sender, e) =>
             {
                 var hti = m_lsvSecurities.HitTest(e.Location);
-                if(hti.Location == ListViewHitTestLocations.Label)
+                if (hti.Location == ListViewHitTestLocations.Label)
                 {
                     var security = SecuritiesList[hti.Item.Index];
                     security.IsChecked = !security.IsChecked;
@@ -57,6 +57,7 @@ namespace securities_list_view
         /// </summary>
         async Task benchmark()
         {
+            Text = DateTime.Now.ToString(@"hh\:mm\:ss tt");
             await Task.Delay(TimeSpan.FromSeconds(2));
             var stopwatch = Stopwatch.StartNew();
             foreach (var item in SecuritiesList)
@@ -65,45 +66,15 @@ namespace securities_list_view
             }
             m_lsvSecurities.Refresh();
             stopwatch.Stop();
+            Text = DateTime.Now.ToString(@"hh\:mm\:ss tt");
+            await Task.Delay(TimeSpan.FromSeconds(0.5));
             MessageBox.Show($"{stopwatch.ElapsedMilliseconds} ms");
         }
-        private ObservableCollection<Security> SecuritiesList { get; } = new ObservableCollection<Security>();
+        private List<Security> SecuritiesList { get; } = new List<Security>();
     }
-    class Security : INotifyPropertyChanged
+    class Security
     {
-        public string Text
-        {
-            get => _text;
-            set
-            {
-                if (!Equals(_text, value))
-                {
-                    _text = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public bool IsChecked
-        {
-            get => _isChecked;
-            set
-            {
-                if (!Equals(_isChecked, value))
-                {
-                    _isChecked = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        bool _isChecked = false;
-
-        private void OnPropertyChanged([CallerMemberName] string caller = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(caller));
-        }
-
-        string _text = string.Empty;
-
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public string Text { get; set; }
+        public bool IsChecked { get; set; }
     }
 }
