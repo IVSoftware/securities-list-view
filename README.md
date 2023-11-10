@@ -1,6 +1,6 @@
 # Securities List View
 
-For controls like `ListView` and `DataGridView` that host a large item count, one way to improve performance is to use `VirtualMode=true` to decouple changes to the underlying list items from the UI draw.
+For controls like `ListView` and `DataGridView` that host a large number of items, one way to improve performance is to use `VirtualMode=true` to decouple changes to the underlying list items from the UI draw. Corollary to this is that if you **want to write a function that will get list of items that need to be checked** this no longer needs to touch the UI at all and should be fast.
 
 ```
 public partial class MainForm : Form
@@ -50,32 +50,44 @@ public partial class MainForm : Form
 }
 ```
 
-After generating a list of 3000 securities and showing the list, after 2 seconds the `benchmark()` method is called to set them all to checked.
+After generating a list of 3000 securities and showing the list, after 2 seconds the `benchmark()` method is called to measure how long it takes to get a list of items that need to be checked, which in this example is "every fourth item". 
 
-[![screenshot][1]][1]
+[![conditional list selection][1]][1]
 
 ```
-
     /// <summary>
-    ///  Show the dialog, then in 2 seconds set the 
-    ///  checkboxes to true for 3000 items.
+    ///  Show the dialog, wait 2 seconds, then 
+    ///  run conditional set check for 3000 items.
     /// </summary>
     async Task benchmark()
     {
         await Task.Delay(TimeSpan.FromSeconds(2));
+        Text = DateTime.Now.ToString(@"hh\:mm\:ss\.ffff tt");
+        screenshot("screenshot.1.png");
         var stopwatch = Stopwatch.StartNew();
-        foreach (var item in SecuritiesList)
-        {
-            item.IsChecked = true;
-        }
+
+        // Example of a function that will get list
+        // of items that need to be checked.
+        setListOfItemsConditionalChecked();
+
         m_lsvSecurities.Refresh();
         stopwatch.Stop();
+        Text = DateTime.Now.ToString(@"hh\:mm\:ss\.ffff tt");
         await Task.Delay(TimeSpan.FromSeconds(0.5));
         MessageBox.Show($"{stopwatch.ElapsedMilliseconds} ms");
     }
-```
 
-Where:
+    private void setListOfItemsConditionalChecked()
+    {
+        for (int i = 0; i < SecuritiesList.Count; i++) 
+        {
+            var mod = i + 1;
+            SecuritiesList[i].IsChecked = (mod % 4 == 0);
+        }
+    }
+```
+---
+**Class for list items**
 
 ```class Security
 {
@@ -85,4 +97,4 @@ Where:
 ```
 
 
-  [1]: https://i.stack.imgur.com/3nRSY.png
+  [1]: https://i.stack.imgur.com/YrogU.png
