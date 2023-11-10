@@ -70,7 +70,7 @@ namespace securities_list_view
         {
             await Task.Delay(TimeSpan.FromSeconds(2));
             Text = DateTime.Now.ToString(@"hh\:mm\:ss\.ffff tt");
-            screenshot("screenshot.1.png");
+            // screenshot("screenshot.1.png");
             var stopwatch = Stopwatch.StartNew();
 
             // Example of a function that will get list
